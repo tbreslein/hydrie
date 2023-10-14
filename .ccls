@@ -1,0 +1,3 @@
+%compile_commands.json
+%c -std=c23
+%cpp -std=c++20

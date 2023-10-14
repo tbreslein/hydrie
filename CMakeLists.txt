@@ -116,8 +116,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
               -Wunused
               -Wno-switch-enum
               -march=native
-              # -floop-parallelize-all -ftree-parallelize-loops=4
-  )
+              -floop-parallelize-all
+              -ftree-parallelize-loops=4)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   target_compile_options(
@@ -145,12 +145,9 @@ endif()
 
 include(cmake/CPM.cmake)
 
-# cpmaddpackage(NAME blaze GIT_REPOSITORY
-# https://bitbucket.org/blaze-lib/blaze.git GIT_TAG v3.8.2)
-
 cpmaddpackage("gh:romeric/fastor#V0.6.4")
-
-set(HYDRIE_DEPS Fastor hydrie_config)
+find_package(OpenMP REQUIRED)
+set(HYDRIE_DEPS Fastor OpenMP::OpenMP_CXX hydrie_config)
 
 add_library(hydrie INTERFACE src/hydrie.hpp)
 target_include_directories(hydrie INTERFACE src)
