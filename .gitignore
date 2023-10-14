@@ -1,0 +1,13 @@
+# development
+.ccls-cache
+compile_commands.json
+
+# artifacts
+build
+bin
+
+# user dirs
+bench/user
+sims
+data
+.cache/clangd/index

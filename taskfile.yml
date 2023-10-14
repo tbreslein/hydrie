@@ -1,0 +1,39 @@
+---
+version: 3
+
+env:
+    CC: gcc
+    CXX: g++
+
+vars:
+    BUILD_DIR: ./build
+    SOURCE_DIR: .
+    BIN_DIR: ./bin
+    BUILD_TYPE: RelWithDebInfo
+    BUILD_TEST: "ON"
+    BUILD_BENCH: "OFF"
+    GENERATOR:
+        sh: command -v ninja >/dev/null && echo "Ninja" || echo "Unix Makefiles"
+
+tasks:
+    clean: rm -fr {{.BUILD_DIR}} {{.BIN_DIR}} CMakeCache.txt
+
+    config:
+        deps: [clean]
+        cmd: cmake -S{{.SOURCE_DIR}} -B{{.BUILD_DIR}}
+            -G"{{.GENERATOR}}"
+            -DCMAKE_BUILD_TYPE="{{.BUILD_TYPE}}"
+            -DEXAMPLES="{{.EX}}"
+            -DBUILD_TEST="{{.BUILD_TEST}}"
+            -DBUILD_BENCH="{{.BUILD_BENCH}}"
+
+    build: cmake --build {{.BUILD_DIR}} && cmake --install {{.BUILD_DIR}}
+
+    run-example:
+        deps: [build]
+        cmd: "{{.BIN_DIR}}/examples/{{.EX}}"
+
+    test:
+        deps: [build]
+        cmds:
+            - "{{.BIN_DIR}}/unit_test"
