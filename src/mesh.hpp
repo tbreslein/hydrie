@@ -6,20 +6,20 @@
 namespace hydrie {
 
 struct Mesh {
-    MeshType type;
-    double dxi;
-    double deta;
-    double dphi;
-    double inv_dxi;
-    Tensor1<N_ALL> sqrt_g;
-    Tensor1<N_ALL> volume;
-    Tensor1<N_ALL> deta_dphi_div_volume;
-    Tensor2<2, N_ALL> face_dist;
-    Tensor2<2, N_ALL> darea_xi_deta_dphi;
-    Tensor2<NUM_DIR, N_ALL> xi;
-    Tensor2<NUM_DIR, N_ALL> h_xi;
-    Tensor2<NUM_DIR, N_ALL> h_eta;
-    Tensor2<NUM_DIR, N_ALL> h_phi;
+    const MeshType type;
+    const double dxi;
+    const double deta;
+    const double dphi;
+    const double inv_dxi;
+    const Tensor1<N_ALL> sqrt_g;
+    const Tensor1<N_ALL> volume;
+    const Tensor1<N_ALL> deta_dphi_div_volume;
+    const Tensor2<2, N_ALL> face_dist;
+    const Tensor2<2, N_ALL> darea_xi_deta_dphi;
+    const Tensor2<NUM_DIR, N_ALL> xi;
+    const Tensor2<NUM_DIR, N_ALL> h_xi;
+    const Tensor2<NUM_DIR, N_ALL> h_eta;
+    const Tensor2<NUM_DIR, N_ALL> h_phi;
 };
 
 auto init_mesh(const MeshConfig &mesh_config) noexcept -> Mesh {

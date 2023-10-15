@@ -79,6 +79,7 @@ enum Direction {
     East,
     Cent,
 };
+constexpr const size_t NUM_DIR = 3;
 
 std::string to_string(const Direction x) {
     switch (x) {
@@ -92,8 +93,6 @@ std::string to_string(const Direction x) {
             UNHANDLED_CASE(x);
     }
 }
-
-#define NUM_DIR 3UL
 
 // these two enums count up in powers of 2 starting from 2, because then we can
 // combine them with directions West and East through | to build unique numbers.
@@ -158,31 +157,6 @@ std::string to_string(const BoundaryCustomType x) {
 #define I_COMP_MAX (I_MAX - N_GC)
 #endif
 
-#if PHYSICS_TYPE == PhysicsEulerIsothermal
-
-#define J_ALL 3UL
-#define J_RHO 0UL
-#define J_XI 1UL
-#define J_ETA 2UL
-#define J_P 0UL
-
-#elif PHYSICS_TYPE == PhysicsEulerAdiabatic
-
-#define J_ALL 4UL
-#define J_RHO 0UL
-#define J_XI 1UL
-#define J_ETA 2UL
-#define J_P 3UL
-
-#else
-#error "PHYSICS_TYPE has invalid value!"
-#endif
-
-#define J_MAX J_ALL - 1UL
-#define J_EIGEN_MIN 0UL
-#define J_EIGEN_MAX J_MAX
-
-using Boundaries =
-    std::variant<BoundaryType, std::array<BoundaryCustomType, J_ALL>>;
+using Boundaries = std::variant<BoundaryType, std::vector<BoundaryCustomType>>;
 
 } // namespace hydrie
