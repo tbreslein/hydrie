@@ -1,20 +1,26 @@
 #pragma once
 
 #include "errorhandling.hpp"
-#include <Fastor/Fastor.h>
+#include <blaze/math/StaticMatrix.h>
+#include <blaze/math/StaticVector.h>
 #include <string>
 #include <variant>
 
 namespace hydrie {
 
+using blaze::column;
+using blaze::columns;
+using blaze::row;
+using blaze::rows;
+
 template <size_t N>
-using Tensor1 = Fastor::Tensor<double, N>;
+using Tensor1 = blaze::StaticVector<double, N>;
 
 template <size_t M, size_t N>
-using Tensor2 = Fastor::Tensor<double, M, N>;
+using Tensor2 = blaze::StaticMatrix<double, M, N>;
 
 template <size_t O, size_t M, size_t N>
-using Tensor3 = Fastor::Tensor<double, O, M, N>;
+using Tensor3 = std::array<Tensor2<M, N>, O>;
 
 enum MeshType { MeshCartesian };
 

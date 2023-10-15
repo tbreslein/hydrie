@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config.hpp"
+#include "defines.hpp"
 
 namespace hydrie {
 
@@ -38,8 +39,8 @@ auto init_mesh(const MeshConfig &mesh_config) noexcept -> Mesh {
         xi(West, i) = mesh_config.xi_in +
                       dxi * static_cast<double>(i - static_cast<int>(2));
     }
-    xi(Cent, Fastor::all) = xi(West, Fastor::all) + 0.5 * dxi;
-    xi(East, Fastor::all) = xi(West, Fastor::all) + dxi;
+    row<Cent>(xi) = row<West>(xi) + 0.5 * dxi;
+    row<East>(xi) = row<West>(xi) + dxi;
 
     Tensor2<NUM_DIR, N_ALL> h_xi(1.0);
     Tensor2<NUM_DIR, N_ALL> h_eta(1.0);

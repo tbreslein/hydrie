@@ -2,7 +2,6 @@
 
 #include "config.hpp"
 #include "mesh.hpp"
-#include <Fastor/Fastor.h>
 #include <format>
 #include <iostream>
 

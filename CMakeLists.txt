@@ -1,3 +1,29 @@
+# ===============================================================================
+#
+# CMake file configuring hydrie
+#
+# Copyright (c) 2023 Tommy Breslein <https://github.com/tbreslein>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# ===============================================================================
+
 cmake_minimum_required(VERSION 3.26)
 
 project(
@@ -12,11 +38,11 @@ set(EXAMPLES
     ""
     CACHE STRING "; separated list of examples to compile")
 
-set(BUILD_TEST
+set(HYDRIE_TEST
     OFF
     CACHE BOOL "whether to build the test binaries")
 
-set(BUILD_BENCHES
+set(HYDRIE_BENCH
     OFF
     CACHE BOOL "whether to build the bench binaries")
 
@@ -145,20 +171,24 @@ endif()
 
 include(cmake/CPM.cmake)
 
-cpmaddpackage("gh:romeric/fastor#V0.6.4")
+cpmaddpackage(NAME blaze GIT_REPOSITORY
+              https://bitbucket.org/blaze-lib/blaze.git GIT_TAG v3.8.2)
+
+cpmaddpackage(NAME fmt GITHUB_REPOSITORY fmtlib/fmt GIT_TAG 9.1.0)
+
 find_package(OpenMP REQUIRED)
-set(HYDRIE_DEPS Fastor OpenMP::OpenMP_CXX hydrie_config)
+set(HYDRIE_DEPS OpenMP::OpenMP_CXX hydrie_config blaze fmt::fmt)
 
 add_library(hydrie INTERFACE src/hydrie.hpp)
 target_include_directories(hydrie INTERFACE src)
 
 add_subdirectory(examples)
 
-if(${BUILD_TEST})
+if(${HYDRIE_TEST})
   cpmaddpackage("gh:doctest/doctest@2.4.11")
   add_subdirectory(test)
 endif()
-if(${BUILD_BENCHES})
-  cpmaddpackage("gh:doctest/doctest@2.4.11")
+if(${HYDRIE_BENCH})
+  cpmaddpackage("gh:martinus/nanobench#v4.3.11")
   add_subdirectory(bench)
 endif()

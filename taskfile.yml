@@ -2,16 +2,16 @@
 version: 3
 
 env:
-    CC: gcc
-    CXX: g++
+    CC: clang
+    CXX: clang++
 
 vars:
     BUILD_DIR: ./build
     SOURCE_DIR: .
     BIN_DIR: ./bin
     BUILD_TYPE: RelWithDebInfo
-    BUILD_TEST: "ON"
-    BUILD_BENCH: "OFF"
+    HYDRIE_TEST: "ON"
+    HYDRIE_BENCH: "ON"
     GENERATOR:
         sh: command -v ninja >/dev/null && echo "Ninja" || echo "Unix Makefiles"
 
@@ -24,8 +24,8 @@ tasks:
             -G"{{.GENERATOR}}"
             -DCMAKE_BUILD_TYPE="{{.BUILD_TYPE}}"
             -DEXAMPLES="{{.EX}}"
-            -DBUILD_TEST="{{.BUILD_TEST}}"
-            -DBUILD_BENCH="{{.BUILD_BENCH}}"
+            -DHYDRIE_TEST="{{.HYDRIE_TEST}}"
+            -DHYDRIE_BENCH="{{.HYDRIE_BENCH}}"
 
     build: cmake --build {{.BUILD_DIR}} && cmake --install {{.BUILD_DIR}}
 
@@ -35,5 +35,8 @@ tasks:
 
     test:
         deps: [build]
-        cmds:
-            - "{{.BIN_DIR}}/unit_test"
+        cmd: "{{.BIN_DIR}}/test/unit_test"
+
+    bench:
+        deps: [build, test]
+        cmd: "{{.BIN_DIR}}/bench/bench"
