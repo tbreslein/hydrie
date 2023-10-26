@@ -11,3 +11,4 @@ bench/user
 sims
 data
 .cache/clangd/index
+.direnv

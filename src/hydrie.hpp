@@ -2,7 +2,7 @@
 
 #include "config.hpp"
 #include "mesh.hpp"
-#include <format>
+#include <fmt/format.h>
 #include <iostream>
 
 namespace hydrie {
@@ -15,7 +15,7 @@ struct Hydrie {
     }
 
     int run(void) {
-        std::cout << std::format("dxi = {}\n", this->mesh.dxi);
+        std::cout << fmt::format("dxi = {}\n", this->mesh.dxi);
         return 0;
     }
 };
