@@ -107,9 +107,9 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
       ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
-# soft link for compile_commands
-# file(CREATE_LINK ${CMAKE_BINARY_DIR}/compile_commands.json
-#      ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json SYMBOLIC)
+# soft link for compile_commands file(CREATE_LINK
+# ${CMAKE_BINARY_DIR}/compile_commands.json
+# ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json SYMBOLIC)
 
 add_library(hydrie_config INTERFACE)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -142,7 +142,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
               -Wunused
               -Wno-switch-enum
               -march=native
-              # -floop-parallelize-all
+              -floop-parallelize-all
               -ftree-parallelize-loops=4)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -182,7 +182,5 @@ add_subdirectory(examples)
 if(${HYDRIE_TEST})
   add_subdirectory(test)
 endif()
-# if(${HYDRIE_BENCH})
-#   cpmaddpackage("gh:martinus/nanobench#v4.3.11")
-#   add_subdirectory(bench)
-# endif()
+# if(${HYDRIE_BENCH}) cpmaddpackage("gh:martinus/nanobench#v4.3.11")
+# add_subdirectory(bench) endif()
