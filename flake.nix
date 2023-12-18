@@ -25,33 +25,43 @@
           pkgsStatic.fmt
           doctest
           cppcheck
-
-          # dev tools
-          neocmakelsp
-          cmake-format
         ];
 
-        mkExample = example:
+        mkPkg = { name, buildType ? "Release", tests ? false, bench ? false }:
           gcc_stdenv.mkDerivation {
-            name = "${example}";
-            inherit buildInputs;
+            inherit buildInputs name;
             src = ./.;
             buildPhase = ''
               cmake -S$src -Bbuild -G"Ninja" \
-                -DCMAKE_BUILD_TYPE="Release" \
-                -DEXAMPLES="${example}" \
-                -DHYDRIE_TEST="OFF" \
-                -DHYDRIE_BENCH="OFF"
+                -DCMAKE_BUILD_TYPE="${buildType}" \
+                -DEXAMPLES="${name}" \
+                -DHYDRIE_TEST="${if tests then "ON" else "OFF"}" \
+                -DHYDRIE_BENCH="${if bench then "ON" else "OFF"}"
               cmake --build build
             '';
             installPhase = ''
               mkdir -p $out/bin
-              cp build/examples/${example} $out/bin/
+              cp -fr build/examples/${name} $out/bin/
               cp build/compile_commands.json $out/
             '';
             CC = "${pkgs.gcc13}/bin/gcc";
             CXX = "${pkgs.gcc13}/bin/g++";
           };
+
+        mkExample = name:
+          mkPkg {
+            inherit name;
+            buildType = "Release";
+            tests = true;
+            bench = true;
+          };
+
+        availableExamples = [ "minimal" ];
+        # availableExamples =
+        #   let examples = pkgs.lib.sourceFilesBySuffices ./examples [ ".cpp" ];
+        #   in map (x:
+        #     builtins.head
+        #     (builtins.split ".cpp$" (builtins.baseNameOf toString x))) examples;
       in {
         # https://discourse.nixos.org/t/how-to-select-a-specific-version-of-gcc-within-a-flake-nix/23372/6
         devShells.default = (pkgs.mkShell.override { stdenv = clang_stdenv; }) {
@@ -60,12 +70,13 @@
             clang_16
             llvmPackages_16.openmp
             cppcheck
-            go-task
+            neocmakelsp
+            cmake-format
           ]);
           CC = "${pkgs.clang_16}/bin/clang";
           CXX = "${pkgs.clang_16}/bin/clang++";
         };
 
-        packages.minimal = mkExample "minimal";
+        packages = pkgs.lib.genAttrs availableExamples (x: mkExample x);
       });
 }
