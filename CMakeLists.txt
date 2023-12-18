@@ -108,8 +108,8 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
 endif()
 
 # soft link for compile_commands
-file(CREATE_LINK ${CMAKE_BINARY_DIR}/compile_commands.json
-     ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json SYMBOLIC)
+# file(CREATE_LINK ${CMAKE_BINARY_DIR}/compile_commands.json
+#      ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json SYMBOLIC)
 
 add_library(hydrie_config INTERFACE)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -142,7 +142,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
               -Wunused
               -Wno-switch-enum
               -march=native
-              -floop-parallelize-all
+              # -floop-parallelize-all
               -ftree-parallelize-loops=4)
 
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -169,15 +169,10 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
               -march=native)
 endif()
 
-include(cmake/CPM.cmake)
-
-cpmaddpackage(NAME blaze GIT_REPOSITORY
-              https://bitbucket.org/blaze-lib/blaze.git GIT_TAG v3.8.2)
-
-cpmaddpackage(NAME fmt GITHUB_REPOSITORY fmtlib/fmt GIT_TAG 9.1.0)
-
 find_package(OpenMP REQUIRED)
-set(HYDRIE_DEPS OpenMP::OpenMP_CXX hydrie_config blaze fmt::fmt)
+find_package(blaze REQUIRED)
+find_package(fmt REQUIRED)
+set(HYDRIE_DEPS OpenMP::OpenMP_CXX hydrie_config blaze::blaze fmt::fmt)
 
 add_library(hydrie INTERFACE src/hydrie.hpp)
 target_include_directories(hydrie INTERFACE src)
@@ -185,10 +180,9 @@ target_include_directories(hydrie INTERFACE src)
 add_subdirectory(examples)
 
 if(${HYDRIE_TEST})
-  cpmaddpackage("gh:doctest/doctest@2.4.11")
   add_subdirectory(test)
 endif()
-if(${HYDRIE_BENCH})
-  cpmaddpackage("gh:martinus/nanobench#v4.3.11")
-  add_subdirectory(bench)
-endif()
+# if(${HYDRIE_BENCH})
+#   cpmaddpackage("gh:martinus/nanobench#v4.3.11")
+#   add_subdirectory(bench)
+# endif()

@@ -7,14 +7,37 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        # https://discourse.nixos.org/t/allow-insecure-packages-in-flake-nix/34655/2
+        # pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = (import nixpkgs {
+          inherit system;
+          config.allowUnsupportedSystem = true;
+        });
 
         clang_stdenv = pkgs.llvmPackages_16.stdenv;
         gcc_stdenv = pkgs.gcc13Stdenv;
 
         # TODO: declare the external libraries (blaze, fmt, doctest, nanobench)
         # as deps, instead of using CPM
-        buildInputs = with pkgs; [ cmake ninja gcc13 openblas pkg-config ];
+        buildInputs = with pkgs; [
+          # build tools
+          cmake
+          ninja
+          gcc13
+          pkg-config
+
+          # deps
+          blaze
+          openblas
+          pkgsStatic.fmt
+          doctest
+          cppcheck
+          # still need add either chronoxor/cppbenchmark or martinus/nanobench
+
+          # dev tools
+          neocmakelsp
+          cmake-format
+        ];
 
         mkExample = example:
           gcc_stdenv.mkDerivation {
@@ -27,10 +50,11 @@
                 -DEXAMPLES="${example}" \
                 -DHYDRIE_TEST="OFF" \
                 -DHYDRIE_BENCH="OFF"
+              cmake --build build
             '';
             installPhase = ''
-              mkdir -p $out/examples
-              cp build/examples/minimal $out/examples/
+              mkdir -p $out/bin
+              cp -r build/examples/${example} $out/bin/
             '';
             CC = "${pkgs.gcc13}/bin/gcc";
             CXX = "${pkgs.gcc13}/bin/g++";

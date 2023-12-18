@@ -12,3 +12,4 @@ sims
 data
 .cache/clangd/index
 .direnv
+result*
