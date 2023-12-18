@@ -107,10 +107,6 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
       ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
-# soft link for compile_commands file(CREATE_LINK
-# ${CMAKE_BINARY_DIR}/compile_commands.json
-# ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json SYMBOLIC)
-
 add_library(hydrie_config INTERFACE)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   target_compile_options(
