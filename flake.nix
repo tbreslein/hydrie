@@ -1,10 +1,14 @@
 {
   description = "language/toolchain agnostic monorepo tool";
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    systems.url = "github:nix-systems/x86_64-linux";
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
   };
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -57,11 +61,6 @@
           };
 
         availableExamples = [ "minimal" ];
-        # availableExamples =
-        #   let examples = pkgs.lib.sourceFilesBySuffices ./examples [ ".cpp" ];
-        #   in map (x:
-        #     builtins.head
-        #     (builtins.split ".cpp$" (builtins.baseNameOf toString x))) examples;
       in {
         # https://discourse.nixos.org/t/how-to-select-a-specific-version-of-gcc-within-a-flake-nix/23372/6
         devShells.default = (pkgs.mkShell.override { stdenv = clang_stdenv; }) {
@@ -77,6 +76,6 @@
           CXX = "${pkgs.clang_16}/bin/clang++";
         };
 
-        packages = pkgs.lib.genAttrs availableExamples (x: mkExample x);
+        packages = pkgs.lib.genAttrs availableExamples mkExample;
       });
 }
