@@ -6,26 +6,26 @@
 namespace hydrie {
 
 struct MeshConfig {
-    MeshType type;
-    double xi_in;
-    double xi_out;
+    const MeshType type;
+    const double xi_in;
+    const double xi_out;
 };
 
 struct StateConfig {
-    double gamma;
+    const double gamma;
 };
 
 struct NumfluxConfig {
-    LimiterType limiter_type;
+    const LimiterType limiter_type;
 };
 
 struct Config {
-    std::string sim_name;
-    bool print_banner;
-    MeshConfig mesh_config;
-    StateConfig state_config;
-    NumfluxConfig numflux_config;
-    Boundaries boundaries;
+    const std::string sim_name;
+    const bool print_banner;
+    const MeshConfig mesh_config;
+    const StateConfig state_config;
+    const NumfluxConfig numflux_config;
+    const Boundaries boundaries;
 };
 
 } // namespace hydrie
