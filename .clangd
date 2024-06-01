@@ -1,0 +1,4 @@
+---
+CompileFlags:
+  Add: [-Wall, -Wextra, -std=c++2b]
+  # Compiler: g++
