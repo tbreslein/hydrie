@@ -1,8 +1,9 @@
 alias c := config
 alias b := build
-alias e := example
+alias r := run
 alias t := test
 
+ex := "NONE"
 src_dir := "."
 build_dir := "build"
 build_clang_dir := "build_clang"
@@ -12,17 +13,17 @@ export CC := "gcc"
 export CXX := "g++"
 export CMAKE_EXPORT_COMPILE_COMMANDS := "YES"
 
-config: clean
-    CC="clang" CXX="clang++" cmake -S {{ src_dir }} -B {{ build_clang_dir }} -G {{ generator }}
-    cmake -S {{ src_dir }} -B {{ build_dir }} -G {{ generator }}
+config ex=ex: clean
+    CC="clang" CXX="clang++" cmake -S {{ src_dir }} -B {{ build_clang_dir }} -G {{ generator }} -DHYDRIE_EXAMPLE={{ ex }}
+    cmake -S {{ src_dir }} -B {{ build_dir }} -G {{ generator }} -DHYDRIE_EXAMPLE={{ ex }}
     ln -sf {{ build_clang_dir }}/compile_commands.json ./compile_commands.json
 
-build:
-    if [ ! -d {{ build_dir }} ] || [ ! -d {{ build_clang_dir }} ]; then just config; fi
+build ex=ex:
+    if [ ! -d {{ build_dir }} ] || [ ! -d {{ build_clang_dir }} ]; then just config {{ ex }}; fi
     cmake --build {{ build_dir }}
 
-example name: build
-    ./{{ build_dir }}/{{ name }}
+run ex=ex: (build ex)
+    ./{{ build_dir }}/{{ ex }}
 
 test: build
     ctest --build {{ build_dir }}

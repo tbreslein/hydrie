@@ -6,6 +6,11 @@ project(
   DESCRIPTION "TODO"
   LANGUAGES CXX)
 
+option(HYDRIE_TEST "Whether to build Hydrie's test suite" OFF)
+option(HYDRIE_EXAMPLE
+       "Which example to build; defaults to NONE, so no example is being built"
+       "NONE")
+
 set(CMAKE_CXX_STANDARD 23)
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
   set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES
@@ -15,7 +20,7 @@ endif()
 set(EIGEN_BUILD_TESTING OFF)
 
 include(cmake/CPM.cmake)
-# cpmaddpackage("gh:catchorg/Catch2@3.4.0")
+# cpmaddpackage("gh:snaipe/criterion@2.4.2")
 cpmaddpackage(
   GITLAB_REPOSITORY
   libeigen/eigen
@@ -35,6 +40,8 @@ target_include_directories(
 
 target_compile_features(hydrie_hydrie INTERFACE cxx_std_23)
 
-add_executable(minimal examples/minimal.cpp)
-target_link_libraries(minimal hydrie::hydrie eigen)
-target_compile_features(minimal INTERFACE cxx_std_23)
+if(NOT HYDRIE_EXAMPLE STREQUAL "NONE")
+  add_executable("${HYDRIE_EXAMPLE}" "examples/${HYDRIE_EXAMPLE}.cpp")
+  target_link_libraries("${HYDRIE_EXAMPLE}" hydrie::hydrie eigen)
+  target_compile_features("${HYDRIE_EXAMPLE}" INTERFACE cxx_std_23)
+endif()
